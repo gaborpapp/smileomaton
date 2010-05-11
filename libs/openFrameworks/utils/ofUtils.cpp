@@ -130,7 +130,7 @@ void ofDisableDataPath(){
 
 //use ofSetDataPathRoot() to override this
 #if defined TARGET_OSX && defined OSX_APP
-	static string dataPathRoot = "../../../data/";
+	static string dataPathRoot = "../Resources/data/";
 #else
 	static string dataPathRoot = "data/";
 #endif

@@ -11,6 +11,7 @@ if platform == 'posix':
 	PKG_CONFIG = ARGUMENTS.get('PKGConfig', 'pkg-config')
 elif platform  == 'darwin':
 	PKG_CONFIG = ARGUMENTS.get('PKGConfig', '/opt/local/bin/pkg-config')
+	AddOption('--app', action='store_true', help='Build OSX application')
 
 OFLIB = ['../libs/openFrameworks/utils/ofMath.cpp',
 	'../libs/openFrameworks/utils/ofUtils.cpp',
@@ -178,10 +179,6 @@ env.Append(LIBS = LIBS)
 for lib in ['freetype2']:
 	env.MergeFlags(['!%s --cflags --libs %s' % (PKG_CONFIG, lib)])
 
-if platform == 'darwin':
-    env.Append(FRAMEWORKS = ['GLUT', 'OpenGL', 'QuickTime', 'CoreServices',
-	    'ApplicationServices', 'Carbon'])
-
 # platform specific fixes
 
 '''
@@ -223,9 +220,44 @@ if not GetOption('clean'):
 			Exit(1)
 	env = conf.Finish()
 
+if platform == 'darwin':
+    env.Append(FRAMEWORKS = ['GLUT', 'OpenGL', 'QuickTime', 'CoreServices',
+	    'ApplicationServices', 'Carbon'])
+
+if platform == 'darwin' and GetOption('app'):
+	env.Append(CCFLAGS = ' -DOSX_APP')
+	for l in ['z', 'freeimage', 'freetype']:
+		if l in env['LIBS']:
+			env['LIBS'].remove(l)
+			env['LIBS'].append(File('/opt/local/lib/lib%s.a' % l))
+
 # build the application
 
 env.Program(source = SOURCES, target = TARGET)
+
+################################################################################
+# packaging / installing
+if env['PLATFORM'] == 'darwin' and GetOption('app'):
+	import sys, os
+	sys.path.append(os.path.abspath('../packages/macos'))
+	from osxbundle import *
+	TOOL_BUNDLE(env)
+	# add dynamic libs
+	frameworks = []
+	dylibs = [ '/opt/local/lib/libPocoFoundation.dylib']
+
+	bundle = env.Alias('app', env.MakeBundle('Smileomaton.app',
+		TARGET,
+		'key',
+		'../packages/macos/smile-Info.plist',
+		dylibs = dylibs,
+		frameworks = frameworks,
+		resources=[['data/', 'data/']],
+		typecode='APPL',
+		icon_file='../packages/macos/smile.icns'))
+
+	# FIXME
+	#env.AddPostAction(bundle, '../packages/macos/osx_app-postbuild.sh')
 
 # run
 
