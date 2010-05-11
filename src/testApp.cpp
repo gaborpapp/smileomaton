@@ -14,7 +14,7 @@ testApp::~testApp()
 
 void testApp::setup()
 {
-	font.loadFont("bitstream.ttf", 8);
+	font.loadFont("bitstream.ttf", 16);
 
 	video_grabber.initGrabber(CAMERA_WIDTH, CAMERA_HEIGHT);
 	video_grabber.setVerbose(false);
@@ -32,6 +32,16 @@ void testApp::setup()
 	gui.loadFromXML();
 
 	gui.show();
+
+	for (int i = 0; i < SMILE_AVERAGES; i++)
+	{
+		smile_averages[i] = 0;
+	}
+	smile_index = 0;
+	happiness = 0;
+
+	imgsaver.allocate(CAMERA_WIDTH, CAMERA_HEIGHT, OF_IMAGE_COLOR);
+	imgsaver.setUseTexture(false);
 }
 
 void testApp::detect_smile()
@@ -52,24 +62,22 @@ void testApp::detect_smile()
 
 	delete [] fpixels;
 
-	/*
-	   MPSmile smileFinder;
+	smile_averages[smile_index] = 0;
+	list<VisualObject *>::iterator face = faces.begin();
+	for(int i = 0; face != faces.end(); ++face, i++)
+	{
+		FaceObject *fo = static_cast<FaceObject*>(*face);
 
-	   RImage<float> rimage(fpixels, img.width, img.height);
-	   bool smileFound = false;
-	   amount = 0;
-	   if(!smileFinder.findSmiles(rimage, faces)) {
-	   if (faces.size() == 1) {
-	   FaceObject* face = static_cast<FaceObject*>(*(faces.begin()));
-	   amount = face->activation;
-	   smileFound = true;
-	   }
-	   }
+		smile_averages[smile_index] += fo->activation;
+	}
+	smile_index = (smile_index + 1) % SMILE_AVERAGES;
 
-	   delete [] fpixels;
-
-	   return smileFound;
-	   */
+	happiness = 0;
+	for (int i = 0; i < SMILE_AVERAGES; i++)
+	{
+		happiness += smile_averages[i];
+	}
+	happiness /= SMILE_AVERAGES;
 }
 
 void testApp::draw_smiles(float x, float y, float w, float ow)
@@ -88,22 +96,45 @@ void testApp::draw_smiles(float x, float y, float w, float ow)
 	{
 		FaceObject *fo = static_cast<FaceObject*>(*face);
 
-		ofSetColor(0x303030);
+		ofSetColor(0xddf010);
 		ofRect(fo->x, fo->y, fo->xSize, fo->ySize);
 
-		snprintf(str, 256, "%f", fo->activation);
-		font.drawString(str, fo->x, fo->y);
-		/*
-		// show result
-		printf(" --- Result ---\n");
-		printf(" Smile:%g\n", fo->activation);
-		printf(" FaceBox[%f %f %f %f]\n", 
-				fo->x, fo->y, fo->x+fo->xSize, fo->y+fo->ySize );
-		//printf(" image columns:%d rows:%d\n", image.columns(),image.rows() );
-		printf(" Processing Face %d\n", i++);
-		*/
+		snprintf(str, 256, "%3.2f", fo->activation);
+		font.drawString(str, fo->x + 5, fo->y + font.getLineHeight());
+
+		snprintf(str, 256, "%3.2f", happiness);
+		font.drawString(str, fo->x + 5, fo->y + 2 * font.getLineHeight());
 	}
 	glPopMatrix();
+}
+
+void testApp::save_photo()
+{
+	static float last_time = -MIN_PHOTO_SAVE_PERIOD;
+	static int index = 0;
+	static int last_sec = 0;
+
+	struct tm tm;
+	time_t ltime;
+	char datename[256];
+
+	float curr_time = ofGetElapsedTimef();
+
+	if (curr_time > last_time + MIN_PHOTO_SAVE_PERIOD)
+	{
+		time(&ltime);
+		localtime_r(&ltime, &tm);
+		if (last_sec != tm.tm_sec)
+			index = 0;
+		sprintf(datename, "cheese-%02d%02d%02d%02d%02d%02d%02d.png", tm.tm_year-100,
+				tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, index);
+
+		imgsaver.setFromPixels(video_grabber.getPixels(), CAMERA_WIDTH, CAMERA_HEIGHT,
+				OF_IMAGE_COLOR, false);
+		imgsaver.saveImage(datename);
+
+		last_time = curr_time;
+	}
 }
 
 void testApp::update()
@@ -117,6 +148,9 @@ void testApp::update()
 	}
 
 	detect_smile();
+
+	if (happiness > 1.0)
+		save_photo();
 }
 
 void testApp::draw()

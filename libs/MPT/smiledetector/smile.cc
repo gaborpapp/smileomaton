@@ -22,9 +22,9 @@
 // Inclue
 //
 #include <iostream>
-#include <string.h> 
+#include <string>
 #include <math.h>
-#include <list.h>
+#include <list>
 #include "smile.h"
 #include "smile_wts.h"
 

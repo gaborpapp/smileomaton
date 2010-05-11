@@ -8,10 +8,16 @@
 
 #include "smile.h"
 
-#define CAMERA_WIDTH 320
-#define CAMERA_HEIGHT 240
+#define CAMERA_WIDTH 640
+#define CAMERA_HEIGHT 480
 
 #define CAMERA_WIDTH_SCALED 500
+
+// number of frames acculating smile value
+#define SMILE_AVERAGES 8
+
+// minimum period of time for saving photos in seconds
+#define MIN_PHOTO_SAVE_PERIOD 30.0
 
 class testApp : public ofBaseApp
 {
@@ -50,8 +56,16 @@ class testApp : public ofBaseApp
 		void detect_smile();
 		void draw_smiles(float x, float y, float w, float ow);
 
+		float smile_averages[SMILE_AVERAGES];
+		int smile_index;
+		float happiness;
+
 		// font
 		ofTrueTypeFont font;
+
+		// image save
+		void save_photo();
+		ofImage imgsaver;
 };
 
 #endif

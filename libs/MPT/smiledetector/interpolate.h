@@ -63,7 +63,7 @@ using namespace Magick;
 #define II_DO_PRINT		(0)
 #define II_DO_DUMP		(0)
 #define II_DO_DISPLAY		(0)
-#define II_DO_LOG               (1)
+#define II_DO_LOG               (0)
 
 // Macro
 #define II_MAX(x,y)            ( (x > y) ? (x) : (y) )
