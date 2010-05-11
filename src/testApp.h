@@ -1,6 +1,8 @@
 #ifndef _TEST_APP
 #define _TEST_APP
 
+#include <list>
+
 #include "ofMain.h"
 
 #include "ofMain.h"
@@ -66,6 +68,10 @@ class testApp : public ofBaseApp
 		// image save
 		void save_photo();
 		ofImage imgsaver;
+
+		// serial
+		ofSerial serial;
+		void send_arduino_message();
 };
 
 #endif

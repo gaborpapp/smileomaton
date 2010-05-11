@@ -1,5 +1,3 @@
-#include <list>
-
 #include "testApp.h"
 
 testApp::testApp() :
@@ -10,6 +8,7 @@ testApp::testApp() :
 testApp::~testApp()
 {
 	video_grabber.close();
+	serial.close();
 }
 
 void testApp::setup()
@@ -42,6 +41,28 @@ void testApp::setup()
 
 	imgsaver.allocate(CAMERA_WIDTH, CAMERA_HEIGHT, OF_IMAGE_COLOR);
 	imgsaver.setUseTexture(false);
+
+	// setup arduino serial
+	serial.enumerateDevices();
+	serial.setup();
+}
+
+void testApp::send_arduino_message()
+{
+	int limits[] = { 1, 2, 3, 4, 5 };
+	const int limit_count = sizeof(limits)/sizeof(limits[0]);
+
+	unsigned happiness_char = 0;
+	for (int i = limit_count - 1; i >= 0; i--)
+	{
+		if (happiness >= limits[i])
+		{
+			happiness_char = limits[i];
+			break;
+		}
+	}
+
+	serial.writeByte(happiness_char);
 }
 
 void testApp::detect_smile()
@@ -151,6 +172,8 @@ void testApp::update()
 
 	if (happiness > 1.0)
 		save_photo();
+
+	send_arduino_message();
 }
 
 void testApp::draw()

@@ -23,14 +23,15 @@ OFLIB = ['../libs/openFrameworks/utils/ofMath.cpp',
 	'../libs/openFrameworks/app/ofAppGlutWindow.cpp',
 	'../libs/openFrameworks/app/ofAppRunner.cpp',
 	'../libs/openFrameworks/video/ofVideoPlayer.cpp',
-	'../libs/openFrameworks/video/ofVideoGrabber.cpp'
+	'../libs/openFrameworks/video/ofVideoGrabber.cpp',
+	'../libs/openFrameworks/communication/ofSerial.cpp'
 ]
 #'../libs/openFrameworks/sound/ofSoundPlayer.cpp',
 #'../libs/openFrameworks/sound/ofSoundStream.cpp'
 # '../libs/openFrameworks/video/ofUCUtils.cpp',
-# '../libs/openFrameworks/communication/ofSerial.cpp'
 
-OFINC = ['../libs/openFrameworks']
+OFINC = ['../libs/openFrameworks',
+	'../libs/openFrameworks/communication/']
 
 GLEELIB = ['../libs/GLee/GLee.c']
 GLEEINC = ['../libs/GLee']
