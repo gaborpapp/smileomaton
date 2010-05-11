@@ -106,7 +106,6 @@ MPTSMILELIB = ['../libs/MPT/blinkDetector/blink.cc',
 	'../libs/MPT/smiledetector/smile.cc',
 	'../libs/MPT/smiledetector/smile_wts.cc']
 	
-
 MPTSMILEINC = ['../libs/MPT/blinkDetector',
 	'../libs/MPT/eyeFinder',
 	'../libs/MPT/eyeFinder/EyeWeightsFiles',
@@ -114,10 +113,15 @@ MPTSMILEINC = ['../libs/MPT/blinkDetector',
 	'../libs/MPT/mputil',
 	'../libs/MPT/smiledetector']
 
+OFXQTVIDEOSAVERLIB = ['../libs/ofxQtVideoSaver/ofxQtVideoSaver.cpp']
+OFXQTVIDEOSAVERINC = ['../libs/ofxQtVideoSaver/']
+
 SOURCES = OFLIB + GLEELIB + OFXMLSETTINGSLIB + \
-	OFXMSAIOLIB + OFXSIMPLEGUILIB + MPTSMILELIB + APP_SOURCES
+	OFXMSAIOLIB + OFXSIMPLEGUILIB + MPTSMILELIB + \
+	OFXQTVIDEOSAVERLIB + APP_SOURCES
 INCLUDES = OFINC + GLEEINC + OFXMLSETTINGSINC + \
-	OFXMSAIOINC + OFXSIMPLEGUIINC + MPTSMILEINC
+	OFXMSAIOINC + OFXSIMPLEGUIINC + MPTSMILEINC + \
+	OFXQTVIDEOSAVERINC
 
 # add fobs on linux and quicktime otherwise
 if platform == 'posix':
