@@ -1,7 +1,7 @@
 ################################################################################
-# gstrrec scons script
+# smileomaton scons script
 
-TARGET = 'smile'
+TARGET = 'smileomaton'
 
 Import(['env', 'platform', 'DEBUG', 'PROFILE', 'STATIC'])
 

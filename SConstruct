@@ -1,5 +1,5 @@
 ################################################################################
-# smile top level scons script
+# smileomaton top level scons script
 
 DEBUG = 1
 PROFILE = 0

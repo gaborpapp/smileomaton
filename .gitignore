@@ -1,0 +1,6 @@
+*.o
+*~
+/.sconf_temp
+/config.log
+.sconsign.dblite
+build/smileomaton
