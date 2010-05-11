@@ -72,6 +72,7 @@ class testApp : public ofBaseApp
 		// serial
 		ofSerial serial;
 		void send_arduino_message();
+		bool serial_inited;
 };
 
 #endif

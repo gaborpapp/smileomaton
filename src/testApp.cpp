@@ -44,7 +44,7 @@ void testApp::setup()
 
 	// setup arduino serial
 	serial.enumerateDevices();
-	serial.setup();
+	serial_inited = serial.setup();
 }
 
 void testApp::send_arduino_message()
@@ -62,7 +62,8 @@ void testApp::send_arduino_message()
 		}
 	}
 
-	serial.writeByte(happiness_char);
+	if (serial_inited)
+		serial.writeByte(happiness_char);
 }
 
 void testApp::detect_smile()
