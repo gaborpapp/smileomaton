@@ -21,6 +21,8 @@
 // minimum period of time for saving photos in seconds
 #define MIN_PHOTO_SAVE_PERIOD 30.0
 
+#define HAPPINESS_THRESHOLD 0.5
+
 class testApp : public ofBaseApp
 {
 	public:

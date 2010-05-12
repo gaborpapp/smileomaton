@@ -132,7 +132,14 @@ void testApp::draw_smiles(float x, float y, float w, float ow)
 	{
 		FaceObject *fo = static_cast<FaceObject*>(*face);
 
-		ofSetColor(0xddf010);
+		if (happiness > HAPPINESS_THRESHOLD)
+		{
+			ofSetColor(0xdd00ee);
+		}
+		else
+		{
+			ofSetColor(0xddf010);
+		}
 		ofRect(fo->x, fo->y, fo->xSize, fo->ySize);
 
 		snprintf(str, 256, "%3.2f", fo->activation);
@@ -187,7 +194,7 @@ void testApp::update()
 
 	detect_smile();
 
-	if (happiness > 1.0)
+	if (happiness > HAPPINESS_THRESHOLD)
 		save_photo();
 
 	send_arduino_message();
