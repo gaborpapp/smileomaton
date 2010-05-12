@@ -51,7 +51,9 @@ class testApp : public ofBaseApp
 
 		// gui
 		ofxSimpleGuiContent *gui_video;
+		ofxSimpleGuiSliderFloat *gui_happy;
 		float face_min_area;
+		float gui_happiness;
 
 		// smile
 		MPSmile smile_finder;

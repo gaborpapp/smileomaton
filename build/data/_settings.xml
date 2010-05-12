@@ -1,0 +1,10 @@
+<controls>
+    <SliderFloat_Happiness>
+        <name>Happiness</name>
+        <value>0.000000</value>
+    </SliderFloat_Happiness>
+    <SliderFloat_Min_face>
+        <name>Min face</name>
+        <value>0.271562</value>
+    </SliderFloat_Min_face>
+</controls>

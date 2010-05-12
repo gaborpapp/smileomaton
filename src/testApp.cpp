@@ -29,7 +29,9 @@ void testApp::setup()
 	gui_video = &gui.addContent("Camera feed", video_texture, CAMERA_WIDTH_SCALED);
 	gui.page(1).setName("Smile detector");
 
-	gui.addSlider("Min face", face_min_area, 0.1, 1).setNewColumn(true);
+	gui_happy = &gui.addSlider("Happiness", gui_happiness, -6, 6);
+	gui_happy->setNewColumn(true);
+	gui.addSlider("Min face", face_min_area, 0.1, 1);
 
 	gui.loadFromXML();
 
@@ -140,6 +142,8 @@ void testApp::draw_smiles(float x, float y, float w, float ow)
 		font.drawString(str, fo->x + 5, fo->y + 2 * font.getLineHeight());
 	}
 	glPopMatrix();
+
+	gui_happy->set(happiness);
 }
 
 void testApp::save_photo()
