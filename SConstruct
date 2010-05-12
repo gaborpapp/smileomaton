@@ -1,7 +1,7 @@
 ################################################################################
 # smileomaton top level scons script
 
-DEBUG = 1
+DEBUG = 0
 PROFILE = 0
 STATIC = 0
 

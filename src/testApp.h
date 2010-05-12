@@ -13,7 +13,7 @@
 #define CAMERA_WIDTH 640
 #define CAMERA_HEIGHT 480
 
-#define CAMERA_WIDTH_SCALED 500
+#define CAMERA_WIDTH_SCALED 640
 
 // number of frames acculating smile value
 #define SMILE_AVERAGES 8
@@ -51,6 +51,7 @@ class testApp : public ofBaseApp
 
 		// gui
 		ofxSimpleGuiContent *gui_video;
+		float face_min_area;
 
 		// smile
 		MPSmile smile_finder;

@@ -1,7 +1,8 @@
 #include "testApp.h"
 
 testApp::testApp() :
-	camera_id(0)
+	camera_id(0),
+	face_min_area(0)
 {
 }
 
@@ -27,6 +28,8 @@ void testApp::setup()
 
 	gui_video = &gui.addContent("Camera feed", video_texture, CAMERA_WIDTH_SCALED);
 	gui.page(1).setName("Smile detector");
+
+	gui.addSlider("Min face", face_min_area, 0.1, 1).setNewColumn(true);
 
 	gui.loadFromXML();
 
@@ -74,7 +77,7 @@ void testApp::detect_smile()
 
 	for (int i = 0, j = 0; i < n; i++, j += 3)
 	{
-		fpixels[i] = (float)((cpixels[j] + cpixels[j + 1] + cpixels[j + 2]) / 3);
+		fpixels[i] = (float)(cpixels[j + 1]);
 	}
 
 	RImage<float> rimage(fpixels, video_width, video_height);
@@ -85,10 +88,19 @@ void testApp::detect_smile()
 	delete [] fpixels;
 
 	smile_averages[smile_index] = 0;
+	float min_area = face_min_area * CAMERA_WIDTH;
+
 	list<VisualObject *>::iterator face = faces.begin();
 	for(int i = 0; face != faces.end(); ++face, i++)
 	{
 		FaceObject *fo = static_cast<FaceObject*>(*face);
+
+		float area = fo->xSize;
+		if (area < min_area)
+		{
+			faces.erase(face);
+			continue;
+		}
 
 		smile_averages[smile_index] += fo->activation;
 	}
