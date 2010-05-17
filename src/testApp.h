@@ -21,6 +21,9 @@
 // minimum period of time for saving photos in seconds
 #define MIN_PHOTO_SAVE_PERIOD 30.0
 
+#define FACE_PERIOD 15.0
+#define NO_FACE_THRESHOLD 0.5
+
 #define HAPPINESS_THRESHOLD 0.5
 
 class testApp : public ofBaseApp
@@ -57,6 +60,16 @@ class testApp : public ofBaseApp
 		float face_min_area;
 		float gui_happiness;
 
+		ofxSimpleGuiToggle *gui_face_detected;
+		bool face_detected;
+
+		float face_period;
+		ofxSimpleGuiSliderFloat *gui_face_period;
+
+		bool take_photo;
+		bool rgb_bgr;
+		bool disable_serial; // disables serial messages
+
 		// smile
 		MPSmile smile_finder;
 		VisualObject faces;
@@ -67,11 +80,13 @@ class testApp : public ofBaseApp
 		int smile_index;
 		float happiness;
 
+		float last_face_time; // last time a face is detected
+
 		// font
 		ofTrueTypeFont font;
 
 		// image save
-		void save_photo();
+		void save_photo(bool force = false);
 		ofImage imgsaver;
 
 		// serial

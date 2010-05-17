@@ -1,10 +1,30 @@
 <controls>
     <SliderFloat_Happiness>
         <name>Happiness</name>
-        <value>0.000000</value>
+        <value>-2.926409</value>
     </SliderFloat_Happiness>
     <SliderFloat_Min_face>
         <name>Min face</name>
-        <value>0.271562</value>
+        <value>0.206875</value>
     </SliderFloat_Min_face>
+    <Toggle_Face_detected>
+        <name>Face detected</name>
+        <value>1</value>
+    </Toggle_Face_detected>
+    <SliderFloat_Face_period>
+        <name>Face period</name>
+        <value>0.000000</value>
+    </SliderFloat_Face_period>
+    <Button_Take_photo>
+        <name>Take photo</name>
+        <value>0</value>
+    </Button_Take_photo>
+    <Toggle_RGB-BGR>
+        <name>RGB-BGR</name>
+        <value>0</value>
+    </Toggle_RGB-BGR>
+    <Toggle_Disable>
+        <name>Disable</name>
+        <value>0</value>
+    </Toggle_Disable>
 </controls>

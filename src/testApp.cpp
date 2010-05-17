@@ -2,7 +2,13 @@
 
 testApp::testApp() :
 	camera_id(0),
-	face_min_area(0)
+	face_min_area(0),
+	face_detected(false),
+	face_period(0),
+	take_photo(false),
+	rgb_bgr(false),
+	disable_serial(false),
+	last_face_time(-FACE_PERIOD)
 {
 }
 
@@ -32,6 +38,13 @@ void testApp::setup()
 	gui_happy = &gui.addSlider("Happiness", gui_happiness, -6, 6);
 	gui_happy->setNewColumn(true);
 	gui.addSlider("Min face", face_min_area, 0.1, 1);
+	gui_face_detected = &gui.addToggle("Face detected", face_detected);
+	gui_face_detected->setSize(168, 20);
+	gui_face_period = &gui.addSlider("Face period", face_period, 0, FACE_PERIOD);
+
+	gui.addButton("Take photo", take_photo).setSize(128, 20);
+	gui.addToggle("RGB-BGR", rgb_bgr).setSize(128, 20);
+	gui.addToggle("Disable", disable_serial).setSize(128, 20);
 
 	gui.loadFromXML();
 
@@ -153,7 +166,7 @@ void testApp::draw_smiles(float x, float y, float w, float ow)
 	gui_happy->set(happiness);
 }
 
-void testApp::save_photo()
+void testApp::save_photo(bool force)
 {
 	static float last_time = -MIN_PHOTO_SAVE_PERIOD;
 	static int index = 0;
@@ -165,7 +178,7 @@ void testApp::save_photo()
 
 	float curr_time = ofGetElapsedTimef();
 
-	if (curr_time > last_time + MIN_PHOTO_SAVE_PERIOD)
+	if ((curr_time > last_time + MIN_PHOTO_SAVE_PERIOD) || force)
 	{
 		time(&ltime);
 		localtime_r(&ltime, &tm);
@@ -175,7 +188,7 @@ void testApp::save_photo()
 				tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, index);
 
 		imgsaver.setFromPixels(video_grabber.getPixels(), CAMERA_WIDTH, CAMERA_HEIGHT,
-				OF_IMAGE_COLOR, false);
+				OF_IMAGE_COLOR, rgb_bgr);
 		imgsaver.saveImage(datename);
 
 		last_time = curr_time;
@@ -184,6 +197,8 @@ void testApp::save_photo()
 
 void testApp::update()
 {
+	static float face_start_time;
+
 	// update video grabber
 	video_grabber.update();
 	if (video_grabber.isFrameNew())
@@ -194,10 +209,42 @@ void testApp::update()
 
 	detect_smile();
 
-	if (happiness > HAPPINESS_THRESHOLD)
-		save_photo();
+	float time = ofGetElapsedTimef();
+	if (faces.size() == 0)
+	{
+		if ((time - last_face_time) >= NO_FACE_THRESHOLD)
+		{
+			face_detected = false;
+			face_period = 0;
+		}
+	}
+	else // faces.size() > 0
+	{
+		last_face_time = time;
 
-	send_arduino_message();
+		if (face_detected)
+		{
+			face_period = max(.0, FACE_PERIOD - (time - face_start_time));
+		}
+		else
+		{
+			face_detected = true;
+			face_period = FACE_PERIOD;
+			face_start_time = time;
+		}
+	}
+
+	gui_face_detected->set(face_detected);
+	gui_face_period->set(face_period);
+
+	if ((happiness > HAPPINESS_THRESHOLD) || take_photo)
+	{
+		save_photo(take_photo);
+		take_photo = false;
+	}
+
+	if (!disable_serial)
+		send_arduino_message();
 }
 
 void testApp::draw()
