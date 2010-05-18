@@ -26,6 +26,9 @@
 
 #define HAPPINESS_THRESHOLD 0.5
 
+// minimum time period for sending messages
+#define MIN_MESSAGE_PERIOD 30.0
+
 class testApp : public ofBaseApp
 {
 	public:
@@ -58,17 +61,30 @@ class testApp : public ofBaseApp
 		ofxSimpleGuiContent *gui_video;
 		ofxSimpleGuiSliderFloat *gui_happy;
 		float face_min_area;
-		float gui_happiness;
+		float gui_happiness_dummy;
 
 		ofxSimpleGuiToggle *gui_face_detected;
 		bool face_detected;
+		bool gui_face_detected_dummy;
 
 		float face_period;
+		float gui_face_period_dummy;
 		ofxSimpleGuiSliderFloat *gui_face_period;
+
+		float max_happiness; // maximum happiness during a certain time period
+		float gui_max_happiness_dummy;
+		ofxSimpleGuiSliderFloat *gui_max_happiness;
 
 		bool take_photo;
 		bool rgb_bgr;
 		bool disable_serial; // disables serial messages
+
+		// trigger manual messages
+		bool message1;
+		bool message2;
+		bool message3;
+		bool message4;
+		bool message5;
 
 		// smile
 		MPSmile smile_finder;
@@ -93,6 +109,12 @@ class testApp : public ofBaseApp
 		ofSerial serial;
 		void send_arduino_message();
 		bool serial_inited;
+
+		// arduino messages
+		static string messages[];
+
+		void update_timestamp();
+		char timestamp[256];
 };
 
 #endif
