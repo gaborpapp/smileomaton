@@ -21,7 +21,7 @@
 // minimum period of time for saving photos in seconds
 #define MIN_PHOTO_SAVE_PERIOD 30.0
 
-#define FACE_PERIOD 15.0
+#define FACE_PERIOD 8.0
 #define NO_FACE_THRESHOLD 0.5
 
 #define HAPPINESS_THRESHOLD 0.5
@@ -83,8 +83,14 @@ class testApp : public ofBaseApp
 		bool message1;
 		bool message2;
 		bool message3;
-		bool message4;
-		bool message5;
+
+		// smile limits
+		ofxSimpleGuiSliderFloat *gui_limit1;
+		float limit1;
+		ofxSimpleGuiSliderFloat *gui_limit2;
+		float limit2;
+		ofxSimpleGuiSliderFloat *gui_limit3;
+		float limit3;
 
 		// smile
 		MPSmile smile_finder;
@@ -108,6 +114,7 @@ class testApp : public ofBaseApp
 		// serial
 		ofSerial serial;
 		void send_arduino_message();
+		void send_arduino_message(int i);
 		bool serial_inited;
 
 		// arduino messages

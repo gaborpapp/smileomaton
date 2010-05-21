@@ -1,11 +1,11 @@
 <controls>
     <SliderFloat_Happiness>
         <name>Happiness</name>
-        <value>-3.489737</value>
+        <value>-3.412610</value>
     </SliderFloat_Happiness>
     <SliderFloat_Maximum>
         <name>Maximum</name>
-        <value>-0.613419</value>
+        <value>4.446425</value>
     </SliderFloat_Maximum>
     <SliderFloat_Min_face>
         <name>Min face</name>
@@ -17,7 +17,7 @@
     </Toggle_Face_detected>
     <SliderFloat_Face_period>
         <name>Face period</name>
-        <value>8.210999</value>
+        <value>0.000000</value>
     </SliderFloat_Face_period>
     <Button_Take_photo>
         <name>Take photo</name>
@@ -31,6 +31,18 @@
         <name>Disable Messages</name>
         <value>0</value>
     </Toggle_Disable_Messages>
+    <SliderFloat_Limit_A1>
+        <name>Limit A1</name>
+        <value>0.500000</value>
+    </SliderFloat_Limit_A1>
+    <SliderFloat_Limit_A2>
+        <name>Limit A2</name>
+        <value>3.000000</value>
+    </SliderFloat_Limit_A2>
+    <SliderFloat_Limit_A3>
+        <name>Limit A3</name>
+        <value>5.000000</value>
+    </SliderFloat_Limit_A3>
     <Button_Send_A1>
         <name>Send A1</name>
         <value>0</value>
@@ -43,12 +55,4 @@
         <name>Send A3</name>
         <value>0</value>
     </Button_Send_A3>
-    <Button_Send_A4>
-        <name>Send A4</name>
-        <value>0</value>
-    </Button_Send_A4>
-    <Button_Send_A5>
-        <name>Send A5</name>
-        <value>0</value>
-    </Button_Send_A5>
 </controls>

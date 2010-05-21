@@ -11,8 +11,6 @@ testApp::testApp() :
 	message1(false),
 	message2(false),
 	message3(false),
-	message4(false),
-	message5(false),
 	last_face_time(-FACE_PERIOD)
 {
 }
@@ -54,11 +52,13 @@ void testApp::setup()
 	gui.addToggle("RGB-BGR", rgb_bgr).setSize(128, 20);
 	gui.addToggle("Disable Messages", disable_serial);
 
+	gui_limit1 = &gui.addSlider("Limit A1", limit1, -10, 10);
+	gui_limit2 = &gui.addSlider("Limit A2", limit2, -10, 10);
+	gui_limit3 = &gui.addSlider("Limit A3", limit3, -10, 10);
+
 	gui.addButton("Send A1", message1).setSize(128, 20);
 	gui.addButton("Send A2", message2).setSize(128, 20);
 	gui.addButton("Send A3", message3).setSize(128, 20);
-	gui.addButton("Send A4", message4).setSize(128, 20);
-	gui.addButton("Send A5", message5).setSize(128, 20);
 
 	gui.loadFromXML();
 
@@ -80,14 +80,32 @@ void testApp::setup()
 }
 
 // messages sent for each happiness threshold
-string testApp::messages[] = { "a1", "a2", "a3", "a4", "a5" };
+string testApp::messages[] = { "a1", "b1", "c1" };
+
+void testApp::send_arduino_message(int i)
+{
+	char max_msg_count = '5'; // after a5, b5, c1, it restarts from a1, b1, c1
+
+	cout << timestamp << " sending " << messages[i] << endl;
+	if (serial_inited)
+		serial.writeBytes((unsigned char *)messages[i].c_str(), 2);
+	else
+		cout << "arduino not connected" << endl;
+
+	char c = messages[i][1];
+	if (c == max_msg_count)
+		c = '1';
+	else
+		c++;
+	messages[i][1] = c;
+}
 
 void testApp::send_arduino_message()
 {
 	static float last_msg_time = -MIN_MESSAGE_PERIOD;
 
 	// happiness limits for the messages
-	int limits[] = { 1, 2, 3, 4, 5 };
+	int limits[] = { limit1, limit2, limit3 };
 
 	const int limit_count = sizeof(limits)/sizeof(limits[0]);
 
@@ -102,12 +120,11 @@ void testApp::send_arduino_message()
 	}
 
 	float time = ofGetElapsedTimef();
-	if (serial_inited && (happiness_index >= 0))
+	if (happiness_index >= 0)
 	{
 		if ((time - last_msg_time) > MIN_MESSAGE_PERIOD)
 		{
-			cout << timestamp << " sending " << messages[happiness_index] << endl;
-			serial.writeBytes((unsigned char *)messages[happiness_index].c_str(), 2);
+			send_arduino_message(happiness_index);
 			last_msg_time = time;
 		}
 		else
@@ -322,15 +339,13 @@ void testApp::update()
 	}
 
 	// manual messages
-	bool *msg_buttons[] = { &message1, &message2, &message3, &message4, &message5 };
+	bool *msg_buttons[] = { &message1, &message2, &message3 };
 	for (unsigned i = 0; i < sizeof(msg_buttons)/sizeof(msg_buttons[0]); i++)
 	{
 		bool *button = msg_buttons[i];
 		if (*button)
 		{
-			unsigned char *msg = (unsigned char *)messages[i].c_str();
-			cout << timestamp << " manually sending " << msg << endl;
-			serial.writeBytes(msg, 2);
+			send_arduino_message(i);
 			*button = false;
 		}
 	}
