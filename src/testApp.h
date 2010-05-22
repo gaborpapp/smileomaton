@@ -21,7 +21,7 @@
 // minimum period of time for saving photos in seconds
 #define MIN_PHOTO_SAVE_PERIOD 30.0
 
-#define FACE_PERIOD 8.0
+#define FACE_PERIOD 15.0
 #define NO_FACE_THRESHOLD 0.5
 
 #define HAPPINESS_THRESHOLD 0.5
@@ -67,6 +67,7 @@ class testApp : public ofBaseApp
 		bool face_detected;
 		bool gui_face_detected_dummy;
 
+		float face_period_max;
 		float face_period;
 		float gui_face_period_dummy;
 		ofxSimpleGuiSliderFloat *gui_face_period;

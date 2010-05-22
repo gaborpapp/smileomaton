@@ -1,11 +1,11 @@
 <controls>
     <SliderFloat_Happiness>
         <name>Happiness</name>
-        <value>-3.412610</value>
+        <value>-2.837327</value>
     </SliderFloat_Happiness>
     <SliderFloat_Maximum>
         <name>Maximum</name>
-        <value>4.446425</value>
+        <value>1.510952</value>
     </SliderFloat_Maximum>
     <SliderFloat_Min_face>
         <name>Min face</name>
@@ -15,6 +15,10 @@
         <name>Face detected</name>
         <value>1</value>
     </Toggle_Face_detected>
+    <SliderFloat_Face_period_max>
+        <name>Face period max</name>
+        <value>7.921875</value>
+    </SliderFloat_Face_period_max>
     <SliderFloat_Face_period>
         <name>Face period</name>
         <value>0.000000</value>

@@ -46,6 +46,7 @@ void testApp::setup()
 	gui.addSlider("Min face", face_min_area, 0.1, 1);
 	gui_face_detected = &gui.addToggle("Face detected", gui_face_detected_dummy);
 	gui_face_detected->setSize(168, 20);
+	gui.addSlider("Face period max", face_period_max, 0, FACE_PERIOD);
 	gui_face_period = &gui.addSlider("Face period", gui_face_period_dummy, 0, FACE_PERIOD);
 
 	gui.addButton("Take photo", take_photo).setSize(128, 20);
@@ -80,24 +81,26 @@ void testApp::setup()
 }
 
 // messages sent for each happiness threshold
-string testApp::messages[] = { "a1", "b1", "c1" };
+//string testApp::messages[] = { "a1", "b1", "c1" };
+string testApp::messages[] = { "a1", "a2", "a3" };
 
 void testApp::send_arduino_message(int i)
 {
-	char max_msg_count = '5'; // after a5, b5, c1, it restarts from a1, b1, c1
-
 	cout << timestamp << " sending " << messages[i] << endl;
 	if (serial_inited)
 		serial.writeBytes((unsigned char *)messages[i].c_str(), 2);
 	else
 		cout << "arduino not connected" << endl;
 
+	/*
+	char max_msg_count = '5'; // after a5, b5, c1, it restarts from a1, b1, c1
 	char c = messages[i][1];
 	if (c == max_msg_count)
 		c = '1';
 	else
 		c++;
 	messages[i][1] = c;
+	*/
 }
 
 void testApp::send_arduino_message()
@@ -297,7 +300,7 @@ void testApp::update()
 
 		if (face_detected)
 		{
-			face_period = max(.0, FACE_PERIOD - (time - face_start_time));
+			face_period = max(.0f, face_period_max - (time - face_start_time));
 			if (face_period > .0)
 			{
 				if (happiness > max_happiness)
@@ -314,24 +317,37 @@ void testApp::update()
 		}
 		else
 		{
-			during_face_period = true;
-			max_happiness = -10.0;
-			face_detected = true;
-			face_period = FACE_PERIOD;
-			face_start_time = time;
+			if (happiness >= 0)
+			{
+				during_face_period = true;
+				max_happiness = -10.0;
+				face_detected = true;
+				face_period = face_period_max;
+				face_start_time = time;
+			}
 		}
 	}
 
+	// update gui
 	gui_face_detected->set(face_detected);
 	gui_face_period->set(face_period);
 	gui_max_happiness->set(max_happiness);
 
-	if ((happiness > HAPPINESS_THRESHOLD) || take_photo)
+	// update face period slier
+	if (!during_face_period)
+	{
+		gui_face_period->max = face_period_max;
+		gui_face_period->setup();
+	}
+
+	// take photo if smile detected
+	if ((happiness > limit1) || take_photo)
 	{
 		save_photo(take_photo);
 		take_photo = false;
 	}
 
+	// send messages to arduino
 	if (!disable_serial && arduino_msg_trigger)
 	{
 		send_arduino_message();
