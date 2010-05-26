@@ -138,18 +138,22 @@ OFXTHREADLIB = ['../libs/ofxThread/src/ofxThread.cpp']
 OFXTHREADINC = ['../libs/ofxThread/src/']
 
 OFXVECTORMATHLIB = ['../libs/ofxVectorMath/src/ofxMatrix3x3.cpp',
-'../libs/ofxVectorMath/src/ofxMatrix4x4.cpp',
-'../libs/ofxVectorMath/src/ofxQuaternion.cpp']
+	'../libs/ofxVectorMath/src/ofxMatrix4x4.cpp',
+	'../libs/ofxVectorMath/src/ofxQuaternion.cpp']
 OFXVECTORMATHINC = ['../libs/ofxVectorMath/src/']
+
+OFXDIRLISTLIB = ['../libs/ofxDirList/src/ofxDirList.cpp']
+OFXDIRLISTINC = ['../libs/ofxDirList/src/']
 
 SOURCES = OFLIB + GLEELIB + OFXMLSETTINGSLIB + \
 	OFXMSAIOLIB + OFXSIMPLEGUILIB + MPTSMILELIB + \
 	OFXQTVIDEOSAVERLIB + OFXSOUNDPLAYERLIB + \
-	OFXTHREADLIB + OFXVECTORMATHLIB + APP_SOURCES
+	OFXTHREADLIB + OFXVECTORMATHLIB + OFXDIRLISTLIB + \
+	APP_SOURCES
 INCLUDES = OFINC + GLEEINC + OFXMLSETTINGSINC + \
 	OFXMSAIOINC + OFXSIMPLEGUIINC + MPTSMILEINC + \
 	OFXQTVIDEOSAVERINC + OFXSOUNDPLAYERINC + \
-	OFXTHREADINC + OFXVECTORMATHINC
+	OFXTHREADINC + OFXVECTORMATHINC + OFXDIRLISTINC
 
 # add fobs on linux and quicktime otherwise
 if platform == 'posix':

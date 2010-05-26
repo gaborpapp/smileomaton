@@ -7,6 +7,8 @@
 
 #include "ofMain.h"
 #include "ofxSimpleGuiToo.h"
+#include "ofxDirList.h"
+#include "ofxSoundPlayer.h"
 
 #include "smile.h"
 
@@ -26,6 +28,10 @@
 
 // minimum time period for sending messages
 #define MIN_MESSAGE_PERIOD 30.0
+
+// sounds
+#define SOUNDS_SMILE "sounds/smile"
+#define SOUNDS_FACE "sounds/face"
 
 class testApp : public ofBaseApp
 {
@@ -121,6 +127,18 @@ class testApp : public ofBaseApp
 
 		void update_timestamp();
 		char timestamp[256];
+
+		// sounds
+		void load_samples();
+		void free_samples();
+		void play_sample(ofxSoundPlayer **sounds, int n);
+
+		int sounds_smile_count;
+		ofxSoundPlayer **sounds_smile;
+		int sounds_face_count;
+		ofxSoundPlayer **sounds_face;
+
+		ofxDirList dirlist;
 };
 
 #endif

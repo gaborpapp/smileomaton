@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "testApp.h"
 
 testApp::testApp() :
@@ -11,7 +13,9 @@ testApp::testApp() :
 	message1(false),
 	message2(false),
 	message3(false),
-	last_face_time(-FACE_PERIOD)
+	last_face_time(-FACE_PERIOD),
+	sounds_smile_count(0),
+	sounds_face_count(0)
 {
 }
 
@@ -19,10 +23,14 @@ testApp::~testApp()
 {
 	video_grabber.close();
 	serial.close();
+
+	free_samples();
 }
 
 void testApp::setup()
 {
+	ofSetLogLevel(OF_LOG_ERROR);
+
 	font.loadFont("bitstream.ttf", 16);
 
 	video_grabber.initGrabber(CAMERA_WIDTH, CAMERA_HEIGHT);
@@ -78,6 +86,57 @@ void testApp::setup()
 	// setup arduino serial
 	serial.enumerateDevices();
 	serial_inited = serial.setup();
+
+	// setup sounds
+	load_samples();
+}
+
+void testApp::free_samples()
+{
+	for(int i = 0; i < sounds_face_count; i++)
+	{
+		delete sounds_face[i];
+	}
+	delete [] sounds_face;
+
+	for(int i = 0; i < sounds_smile_count; i++)
+	{
+		delete sounds_smile[i];
+	}
+	delete [] sounds_smile;
+}
+
+void testApp::load_samples()
+{
+	dirlist.allowExt("wav");
+
+	int n = dirlist.listDir(SOUNDS_FACE);
+
+	sounds_face_count = n;
+	sounds_face = new ofxSoundPlayer* [n];
+	for(int i = 0; i < n; i++)
+	{
+		//cout << "loading " << " " << dirlist.getPath(i) << endl;
+		sounds_face[i] = new ofxSoundPlayer;
+		sounds_face[i]->loadSound(dirlist.getPath(i));
+	}
+
+	n = dirlist.listDir(SOUNDS_SMILE);
+
+	sounds_smile_count = n;
+	sounds_smile = new ofxSoundPlayer* [n];
+	for(int i = 0; i < n; i++)
+	{
+		//cout << "loading " << " " << dirlist.getPath(i) << endl;
+		sounds_smile[i] = new ofxSoundPlayer;
+		sounds_smile[i]->loadSound(dirlist.getPath(i));
+	}
+}
+
+void testApp::play_sample(ofxSoundPlayer **sounds, int n)
+{
+	int i = random() % n;
+	sounds[i]->play();
 }
 
 // messages sent for each happiness threshold
@@ -263,6 +322,7 @@ void testApp::update()
 	static float face_start_time;
 	static bool during_face_period = false; // during the period when maximum happiness is detected
 	bool arduino_msg_trigger = false;
+	static bool one_chocolate_per_face = false;
 
 	// update video grabber
 	video_grabber.update();
@@ -276,54 +336,63 @@ void testApp::update()
 
 	// check faces, maximum happiness for a time period
 	float time = ofGetElapsedTimef();
-	if (faces.size() == 0)
+
+	if (faces.size() == 0) // no faces detected
 	{
 		if ((time - last_face_time) >= NO_FACE_THRESHOLD)
 		{
-			face_detected = false;
-			face_period = 0;
-
-			if (during_face_period)
+			if (face_detected) // face disappears
 			{
-				during_face_period = false;
-				arduino_msg_trigger = true;
-			}
-			else
-			{
-				max_happiness = -10.0;
-			}
-		}
-	}
-	else // faces.size() > 0
-	{
-		last_face_time = time;
-
-		if (face_detected)
-		{
-			face_period = max(.0f, face_period_max - (time - face_start_time));
-			if (face_period > .0)
-			{
-				if (happiness > max_happiness)
-					max_happiness = happiness;
-			}
-			else
-			{
-				if (during_face_period)
+				if (during_face_period) // send message if it hasn't been sent yet
 				{
 					during_face_period = false;
-					arduino_msg_trigger = true;
+					if (one_chocolate_per_face)
+					{
+						arduino_msg_trigger = true;
+						one_chocolate_per_face = false;
+					}
 				}
 			}
+			face_detected = false;
+		}
+	}
+	else // faces in the picture
+	{
+		last_face_time = time;
+		if (!face_detected) // first time a face shows up
+		{
+			play_sample(sounds_face, sounds_face_count);
+			one_chocolate_per_face = true;
+		}
+		face_detected = true;
+	}
+
+	// start countdown to detect widest smile during period
+	if (face_detected && (happiness >= limit1) && (!during_face_period))
+	{
+		play_sample(sounds_smile, sounds_smile_count);
+
+		during_face_period = true;
+		max_happiness = -10.0;
+		face_period = face_period_max;
+		face_start_time = time;
+	}
+
+	// countdown
+	if (during_face_period)
+	{
+		face_period = max(.0f, face_period_max - (time - face_start_time));
+		if (face_period > .0)
+		{
+			if (happiness > max_happiness)
+				max_happiness = happiness;
 		}
 		else
 		{
-			if (happiness >= 0)
+			if (one_chocolate_per_face)
 			{
-				during_face_period = true;
-				max_happiness = -10.0;
-				face_detected = true;
-				face_period = face_period_max;
-				face_start_time = time;
+				arduino_msg_trigger = true;
+				one_chocolate_per_face = false;
 			}
 		}
 	}
