@@ -116,12 +116,40 @@ MPTSMILEINC = ['../libs/MPT/blinkDetector',
 OFXQTVIDEOSAVERLIB = ['../libs/ofxQtVideoSaver/ofxQtVideoSaver.cpp']
 OFXQTVIDEOSAVERINC = ['../libs/ofxQtVideoSaver/']
 
+OFXSOUNDPLAYERLIB = ['../libs/ofxSoundPlayer/ofxSoundPlayer.cpp',
+	'../libs/ofxSoundPlayer/stb_vorbis/stb_vorbis.c',
+	'../libs/ofxSoundPlayer/OpenAL/AudioDevice.cpp',
+	'../libs/ofxSoundPlayer/OpenAL/AudioResource.cpp',
+	'../libs/ofxSoundPlayer/OpenAL/Effect.cpp',
+	'../libs/ofxSoundPlayer/OpenAL/Listener.cpp',
+	'../libs/ofxSoundPlayer/OpenAL/Music.cpp',
+	'../libs/ofxSoundPlayer/OpenAL/Sound.cpp',
+	'../libs/ofxSoundPlayer/OpenAL/SoundBuffer.cpp',
+	'../libs/ofxSoundPlayer/OpenAL/SoundFile.cpp',
+	'../libs/ofxSoundPlayer/OpenAL/SoundFileDefault.cpp',
+	'../libs/ofxSoundPlayer/OpenAL/SoundFileOgg.cpp',
+	'../libs/ofxSoundPlayer/OpenAL/SoundStereo.cpp',
+	'../libs/ofxSoundPlayer/OpenAL/SoundStream.cpp',
+	'../libs/ofxSoundPlayer/OpenAL/ofxSoundPlayerOpenAL.cpp']
+OFXSOUNDPLAYERINC = ['../libs/ofxSoundPlayer/',
+	'../libs/ofxSoundPlayer/OpenAL']
+
+OFXTHREADLIB = ['../libs/ofxThread/src/ofxThread.cpp']
+OFXTHREADINC = ['../libs/ofxThread/src/']
+
+OFXVECTORMATHLIB = ['../libs/ofxVectorMath/src/ofxMatrix3x3.cpp',
+'../libs/ofxVectorMath/src/ofxMatrix4x4.cpp',
+'../libs/ofxVectorMath/src/ofxQuaternion.cpp']
+OFXVECTORMATHINC = ['../libs/ofxVectorMath/src/']
+
 SOURCES = OFLIB + GLEELIB + OFXMLSETTINGSLIB + \
 	OFXMSAIOLIB + OFXSIMPLEGUILIB + MPTSMILELIB + \
-	OFXQTVIDEOSAVERLIB + APP_SOURCES
+	OFXQTVIDEOSAVERLIB + OFXSOUNDPLAYERLIB + \
+	OFXTHREADLIB + OFXVECTORMATHLIB + APP_SOURCES
 INCLUDES = OFINC + GLEEINC + OFXMLSETTINGSINC + \
 	OFXMSAIOINC + OFXSIMPLEGUIINC + MPTSMILEINC + \
-	OFXQTVIDEOSAVERINC
+	OFXQTVIDEOSAVERINC + OFXSOUNDPLAYERINC + \
+	OFXTHREADINC + OFXVECTORMATHINC
 
 # add fobs on linux and quicktime otherwise
 if platform == 'posix':
@@ -201,7 +229,8 @@ LIBS = [['m', 'math.h'],
 	['pthread', 'pthread.h'],
 	['freeimage', 'FreeImage.h'],
 	['freetype', 'ft2build.h', False],
-	['PocoFoundation', 'Poco/Poco.h']]
+	['PocoFoundation', 'Poco/Poco.h'],
+	['sndfile', 'sndfile.h']]
 
 if platform == 'posix':
 	LIBS += [['X11', 'X11/Xlib.h'],
@@ -227,11 +256,11 @@ if not GetOption('clean'):
 
 if platform == 'darwin':
     env.Append(FRAMEWORKS = ['GLUT', 'OpenGL', 'QuickTime', 'CoreServices',
-	    'ApplicationServices', 'Carbon'])
+	    'ApplicationServices', 'Carbon', 'OpenAL'])
 
 if platform == 'darwin' and GetOption('app'):
 	env.Append(CCFLAGS = ' -DOSX_APP')
-	for l in ['z', 'freeimage', 'freetype']:
+	for l in ['z', 'freeimage', 'freetype', 'sndfile']:
 		if l in env['LIBS']:
 			env['LIBS'].remove(l)
 			env['LIBS'].append(File('/opt/local/lib/lib%s.a' % l))

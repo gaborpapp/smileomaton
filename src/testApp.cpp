@@ -200,7 +200,7 @@ void testApp::draw_smiles(float x, float y, float w, float ow)
 	{
 		FaceObject *fo = static_cast<FaceObject*>(*face);
 
-		if (happiness > HAPPINESS_THRESHOLD)
+		if (happiness > limit1)
 		{
 			ofSetColor(0xdd00ee);
 		}

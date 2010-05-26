@@ -24,8 +24,6 @@
 #define FACE_PERIOD 15.0
 #define NO_FACE_THRESHOLD 0.5
 
-#define HAPPINESS_THRESHOLD 0.5
-
 // minimum time period for sending messages
 #define MIN_MESSAGE_PERIOD 30.0
 
