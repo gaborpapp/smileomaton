@@ -264,10 +264,10 @@ if platform == 'darwin':
 
 if platform == 'darwin' and GetOption('app'):
 	env.Append(CCFLAGS = ' -DOSX_APP')
-	for l in ['z', 'freeimage', 'freetype', 'sndfile']:
+	for l in ['z', 'freeimage', 'freetype', 'sndfile', 'FLAC', 'vorbisenc', 'vorbis', 'ogg']:
 		if l in env['LIBS']:
 			env['LIBS'].remove(l)
-			env['LIBS'].append(File('/opt/local/lib/lib%s.a' % l))
+		env['LIBS'].append(File('/opt/local/lib/lib%s.a' % l))
 
 # build the application
 
@@ -282,7 +282,7 @@ if env['PLATFORM'] == 'darwin' and GetOption('app'):
 	TOOL_BUNDLE(env)
 	# add dynamic libs
 	frameworks = []
-	dylibs = [ '/opt/local/lib/libPocoFoundation.dylib']
+	dylibs = [ '/opt/local/lib/libPocoFoundation.dylib' ]
 
 	bundle = env.Alias('app', env.MakeBundle('Smileomaton.app',
 		TARGET,
@@ -290,7 +290,7 @@ if env['PLATFORM'] == 'darwin' and GetOption('app'):
 		'../packages/macos/smile-Info.plist',
 		dylibs = dylibs,
 		frameworks = frameworks,
-		resources=[['data/', 'data/']],
+		resources=[['data', 'data']],
 		typecode='APPL',
 		icon_file='../packages/macos/smile.icns'))
 

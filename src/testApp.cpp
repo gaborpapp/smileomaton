@@ -109,6 +109,8 @@ void testApp::free_samples()
 void testApp::load_samples()
 {
 	dirlist.allowExt("wav");
+	dirlist.allowExt("ogg");
+	dirlist.allowExt("flac");
 
 	int n = dirlist.listDir(SOUNDS_FACE);
 
