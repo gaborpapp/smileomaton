@@ -52,6 +52,11 @@ class testApp : public ofBaseApp
 		void windowResized(int w, int h);
 
 	private:
+		enum {
+			PLAY_SMILE_SOUND = 0,
+			PLAY_FACE_SOUND
+		};
+
 		// video grabber
 		ofVideoGrabber video_grabber;
 		int camera_id;
@@ -83,6 +88,9 @@ class testApp : public ofBaseApp
 		bool take_photo;
 		bool rgb_bgr;
 		bool disable_serial; // disables serial messages
+
+		bool enable_smile_sound;
+		bool enable_face_sound;
 
 		// trigger manual messages
 		bool message1;
@@ -131,12 +139,14 @@ class testApp : public ofBaseApp
 		// sounds
 		void load_samples();
 		void free_samples();
-		void play_sample(ofxSoundPlayer **sounds, int n);
+		void play_sample(int which_sound);
 
 		int sounds_smile_count;
 		ofxSoundPlayer **sounds_smile;
 		int sounds_face_count;
 		ofxSoundPlayer **sounds_face;
+		ofxSoundPlayer *sound_current_smile;
+		ofxSoundPlayer *sound_current_face;
 
 		ofxDirList dirlist;
 };

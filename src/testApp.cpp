@@ -15,7 +15,9 @@ testApp::testApp() :
 	message3(false),
 	last_face_time(-FACE_PERIOD),
 	sounds_smile_count(0),
-	sounds_face_count(0)
+	sounds_face_count(0),
+	sound_current_smile(NULL),
+	sound_current_face(NULL)
 {
 }
 
@@ -69,6 +71,9 @@ void testApp::setup()
 	gui.addButton("Send A2", message2).setSize(128, 20);
 	gui.addButton("Send A3", message3).setSize(128, 20);
 
+	gui.addToggle("Enable smile sound", enable_smile_sound).setSize(200, 20);
+	gui.addToggle("Enable face sound", enable_face_sound).setSize(200, 20);
+
 	gui.loadFromXML();
 
 	gui.show();
@@ -93,17 +98,23 @@ void testApp::setup()
 
 void testApp::free_samples()
 {
-	for(int i = 0; i < sounds_face_count; i++)
+	if (sounds_face_count > 0)
 	{
-		delete sounds_face[i];
+		for(int i = 0; i < sounds_face_count; i++)
+		{
+			delete sounds_face[i];
+		}
+		delete [] sounds_face;
 	}
-	delete [] sounds_face;
 
-	for(int i = 0; i < sounds_smile_count; i++)
+	if (sounds_smile_count > 0)
 	{
-		delete sounds_smile[i];
+		for(int i = 0; i < sounds_smile_count; i++)
+		{
+			delete sounds_smile[i];
+		}
+		delete [] sounds_smile;
 	}
-	delete [] sounds_smile;
 }
 
 void testApp::load_samples()
@@ -115,30 +126,72 @@ void testApp::load_samples()
 	int n = dirlist.listDir(SOUNDS_FACE);
 
 	sounds_face_count = n;
-	sounds_face = new ofxSoundPlayer* [n];
-	for(int i = 0; i < n; i++)
+	if (n > 0)
 	{
-		//cout << "loading " << " " << dirlist.getPath(i) << endl;
-		sounds_face[i] = new ofxSoundPlayer;
-		sounds_face[i]->loadSound(dirlist.getPath(i));
+		sounds_face = new ofxSoundPlayer* [n];
+		for(int i = 0; i < n; i++)
+		{
+			//cout << "loading " << " " << dirlist.getPath(i) << endl;
+			sounds_face[i] = new ofxSoundPlayer;
+			sounds_face[i]->loadSound(dirlist.getPath(i));
+		}
 	}
 
 	n = dirlist.listDir(SOUNDS_SMILE);
 
 	sounds_smile_count = n;
-	sounds_smile = new ofxSoundPlayer* [n];
-	for(int i = 0; i < n; i++)
+	if (n > 0)
 	{
-		//cout << "loading " << " " << dirlist.getPath(i) << endl;
-		sounds_smile[i] = new ofxSoundPlayer;
-		sounds_smile[i]->loadSound(dirlist.getPath(i));
+		sounds_smile = new ofxSoundPlayer* [n];
+		for(int i = 0; i < n; i++)
+		{
+			//cout << "loading " << " " << dirlist.getPath(i) << endl;
+			sounds_smile[i] = new ofxSoundPlayer;
+			sounds_smile[i]->loadSound(dirlist.getPath(i));
+		}
 	}
 }
 
-void testApp::play_sample(ofxSoundPlayer **sounds, int n)
+void testApp::play_sample(int which_sound)
 {
+	ofxSoundPlayer **sounds = NULL;
+	int n = 0;
+
+	switch (which_sound)
+	{
+		case PLAY_SMILE_SOUND:
+			sounds = sounds_smile;
+			if (!enable_smile_sound)
+				n = 0;
+			else
+				n = sounds_smile_count;
+			break;
+		case PLAY_FACE_SOUND:
+			sounds = sounds_face;
+			if (!enable_face_sound)
+				n = 0;
+			else
+				n = sounds_face_count;
+			break;
+		default:
+			break;
+	}
+
+	if (n == 0)
+		return;
+
 	int i = random() % n;
 	sounds[i]->play();
+	sounds[i]->setLoop(true);
+	switch (which_sound)
+	{
+		case PLAY_FACE_SOUND:
+			sound_current_face = sounds[i];
+			break;
+		case PLAY_SMILE_SOUND:
+			sound_current_smile = sounds[i];
+			break;
+	}
 }
 
 // messages sent for each happiness threshold
@@ -353,6 +406,17 @@ void testApp::update()
 						arduino_msg_trigger = true;
 						one_chocolate_per_face = false;
 					}
+					// stop smile sound
+					if (sound_current_smile && sound_current_smile->getIsPlaying())
+					{
+						sound_current_smile->stop();
+					}
+				}
+
+				// stop face sound
+				if (sound_current_face && sound_current_face->getIsPlaying())
+				{
+					sound_current_face->stop();
 				}
 			}
 			face_detected = false;
@@ -363,7 +427,7 @@ void testApp::update()
 		last_face_time = time;
 		if (!face_detected) // first time a face shows up
 		{
-			play_sample(sounds_face, sounds_face_count);
+			play_sample(PLAY_FACE_SOUND);
 			one_chocolate_per_face = true;
 		}
 		face_detected = true;
@@ -372,7 +436,7 @@ void testApp::update()
 	// start countdown to detect widest smile during period
 	if (face_detected && (happiness >= limit1) && (!during_face_period))
 	{
-		play_sample(sounds_smile, sounds_smile_count);
+		play_sample(PLAY_SMILE_SOUND);
 
 		during_face_period = true;
 		max_happiness = -10.0;
@@ -388,6 +452,11 @@ void testApp::update()
 		{
 			if (happiness > max_happiness)
 				max_happiness = happiness;
+			// set speed of smile sound according to current happiness level
+			if (sound_current_smile && sound_current_smile->getIsPlaying())
+			{
+				sound_current_smile->setSpeed(happiness * .5);
+			}
 		}
 		else
 		{
@@ -395,6 +464,11 @@ void testApp::update()
 			{
 				arduino_msg_trigger = true;
 				one_chocolate_per_face = false;
+			}
+			// stop smile sound
+			if (sound_current_smile && sound_current_smile->getIsPlaying())
+			{
+				sound_current_smile->stop();
 			}
 		}
 	}

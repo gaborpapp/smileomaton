@@ -1,11 +1,11 @@
 <controls>
     <SliderFloat_Happiness>
         <name>Happiness</name>
-        <value>-2.837327</value>
+        <value>0.569585</value>
     </SliderFloat_Happiness>
     <SliderFloat_Maximum>
         <name>Maximum</name>
-        <value>1.510952</value>
+        <value>0.569585</value>
     </SliderFloat_Maximum>
     <SliderFloat_Min_face>
         <name>Min face</name>
@@ -21,7 +21,7 @@
     </SliderFloat_Face_period_max>
     <SliderFloat_Face_period>
         <name>Face period</name>
-        <value>0.000000</value>
+        <value>7.804874</value>
     </SliderFloat_Face_period>
     <Button_Take_photo>
         <name>Take photo</name>
@@ -59,4 +59,12 @@
         <name>Send A3</name>
         <value>0</value>
     </Button_Send_A3>
+    <Toggle_Enable_smile_sound>
+        <name>Enable smile sound</name>
+        <value>1</value>
+    </Toggle_Enable_smile_sound>
+    <Toggle_Enable_face_sound>
+        <name>Enable face sound</name>
+        <value>1</value>
+    </Toggle_Enable_face_sound>
 </controls>
