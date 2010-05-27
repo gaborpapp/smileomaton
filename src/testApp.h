@@ -26,9 +26,6 @@
 #define FACE_PERIOD 15.0
 #define NO_FACE_THRESHOLD 0.5
 
-// minimum time period for sending messages
-#define MIN_MESSAGE_PERIOD 30.0
-
 // sounds
 #define SOUNDS_SMILE "sounds/smile"
 #define SOUNDS_FACE "sounds/face"
@@ -91,6 +88,10 @@ class testApp : public ofBaseApp
 
 		bool enable_smile_sound;
 		bool enable_face_sound;
+
+		// minimum time period for sending messages
+		// all new messages in this period are discarded
+		float min_message_period;
 
 		// trigger manual messages
 		bool message1;

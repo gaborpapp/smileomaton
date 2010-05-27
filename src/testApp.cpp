@@ -66,13 +66,15 @@ void testApp::setup()
 	gui_limit1 = &gui.addSlider("Limit A1", limit1, -10, 10);
 	gui_limit2 = &gui.addSlider("Limit A2", limit2, -10, 10);
 	gui_limit3 = &gui.addSlider("Limit A3", limit3, -10, 10);
+	gui.addSlider("Arduino msg", min_message_period, 0, 30);
 
-	gui.addButton("Send A1", message1).setSize(128, 20);
+	gui.addButton("Send A1", message1).setNewColumn(true).setSize(128, 20);
 	gui.addButton("Send A2", message2).setSize(128, 20);
 	gui.addButton("Send A3", message3).setSize(128, 20);
 
 	gui.addToggle("Enable smile sound", enable_smile_sound).setSize(200, 20);
 	gui.addToggle("Enable face sound", enable_face_sound).setSize(200, 20);
+
 
 	gui.loadFromXML();
 
@@ -219,7 +221,7 @@ void testApp::send_arduino_message(int i)
 
 void testApp::send_arduino_message()
 {
-	static float last_msg_time = -MIN_MESSAGE_PERIOD;
+	static float last_msg_time = -min_message_period;
 
 	// happiness limits for the messages
 	int limits[] = { limit1, limit2, limit3 };
@@ -239,7 +241,7 @@ void testApp::send_arduino_message()
 	float time = ofGetElapsedTimef();
 	if (happiness_index >= 0)
 	{
-		if ((time - last_msg_time) > MIN_MESSAGE_PERIOD)
+		if ((time - last_msg_time) > min_message_period)
 		{
 			send_arduino_message(happiness_index);
 			last_msg_time = time;
