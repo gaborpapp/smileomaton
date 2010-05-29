@@ -89,6 +89,9 @@ class testApp : public ofBaseApp
 		bool enable_smile_sound;
 		bool enable_face_sound;
 
+		float sound_speed_min;
+		float sound_speed_max;
+
 		// minimum time period for sending messages
 		// all new messages in this period are discarded
 		float min_message_period;
@@ -132,7 +135,7 @@ class testApp : public ofBaseApp
 		bool serial_inited;
 
 		// arduino messages
-		static string messages[];
+		static string messages[][7];
 
 		void update_timestamp();
 		char timestamp[256];

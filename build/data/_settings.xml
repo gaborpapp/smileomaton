@@ -1,11 +1,11 @@
 <controls>
     <SliderFloat_Happiness>
         <name>Happiness</name>
-        <value>-1.461517</value>
+        <value>0.000000</value>
     </SliderFloat_Happiness>
     <SliderFloat_Maximum>
         <name>Maximum</name>
-        <value>2.598422</value>
+        <value>0.583409</value>
     </SliderFloat_Maximum>
     <SliderFloat_Min_face>
         <name>Min face</name>
@@ -13,16 +13,60 @@
     </SliderFloat_Min_face>
     <Toggle_Face_detected>
         <name>Face detected</name>
-        <value>1</value>
+        <value>0</value>
     </Toggle_Face_detected>
     <SliderFloat_Face_period_max>
         <name>Face period max</name>
-        <value>7.921875</value>
+        <value>8.015625</value>
     </SliderFloat_Face_period_max>
     <SliderFloat_Face_period>
         <name>Face period</name>
-        <value>4.955875</value>
+        <value>7.601639</value>
     </SliderFloat_Face_period>
+    <SliderFloat_Limit_S>
+        <name>Limit S</name>
+        <value>0.500000</value>
+    </SliderFloat_Limit_S>
+    <SliderFloat_Limit_M>
+        <name>Limit M</name>
+        <value>3.000000</value>
+    </SliderFloat_Limit_M>
+    <SliderFloat_Limit_L>
+        <name>Limit L</name>
+        <value>5.000000</value>
+    </SliderFloat_Limit_L>
+    <SliderFloat_Arduino_msg>
+        <name>Arduino msg</name>
+        <value>30.000000</value>
+    </SliderFloat_Arduino_msg>
+    <SliderFloat_Sound_speed_min>
+        <name>Sound speed min</name>
+        <value>1.012500</value>
+    </SliderFloat_Sound_speed_min>
+    <SliderFloat_Sound_speed_max>
+        <name>Sound speed max</name>
+        <value>6.000000</value>
+    </SliderFloat_Sound_speed_max>
+    <Button_Send_S>
+        <name>Send S</name>
+        <value>0</value>
+    </Button_Send_S>
+    <Button_Send_M>
+        <name>Send M</name>
+        <value>0</value>
+    </Button_Send_M>
+    <Button_Send_L>
+        <name>Send L</name>
+        <value>0</value>
+    </Button_Send_L>
+    <Toggle_Enable_smile_sound>
+        <name>Enable smile sound</name>
+        <value>0</value>
+    </Toggle_Enable_smile_sound>
+    <Toggle_Enable_face_sound>
+        <name>Enable face sound</name>
+        <value>1</value>
+    </Toggle_Enable_face_sound>
     <Button_Take_photo>
         <name>Take photo</name>
         <value>0</value>
@@ -35,40 +79,4 @@
         <name>Disable Messages</name>
         <value>0</value>
     </Toggle_Disable_Messages>
-    <SliderFloat_Limit_A1>
-        <name>Limit A1</name>
-        <value>0.500000</value>
-    </SliderFloat_Limit_A1>
-    <SliderFloat_Limit_A2>
-        <name>Limit A2</name>
-        <value>3.000000</value>
-    </SliderFloat_Limit_A2>
-    <SliderFloat_Limit_A3>
-        <name>Limit A3</name>
-        <value>5.000000</value>
-    </SliderFloat_Limit_A3>
-    <SliderFloat_Arduino_msg>
-        <name>Arduino msg</name>
-        <value>30.000000</value>
-    </SliderFloat_Arduino_msg>
-    <Button_Send_A1>
-        <name>Send A1</name>
-        <value>0</value>
-    </Button_Send_A1>
-    <Button_Send_A2>
-        <name>Send A2</name>
-        <value>0</value>
-    </Button_Send_A2>
-    <Button_Send_A3>
-        <name>Send A3</name>
-        <value>0</value>
-    </Button_Send_A3>
-    <Toggle_Enable_smile_sound>
-        <name>Enable smile sound</name>
-        <value>1</value>
-    </Toggle_Enable_smile_sound>
-    <Toggle_Enable_face_sound>
-        <name>Enable face sound</name>
-        <value>1</value>
-    </Toggle_Enable_face_sound>
 </controls>

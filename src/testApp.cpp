@@ -59,22 +59,24 @@ void testApp::setup()
 	gui.addSlider("Face period max", face_period_max, 0, FACE_PERIOD);
 	gui_face_period = &gui.addSlider("Face period", gui_face_period_dummy, 0, FACE_PERIOD);
 
-	gui.addButton("Take photo", take_photo).setSize(128, 20);
-	gui.addToggle("RGB-BGR", rgb_bgr).setSize(128, 20);
-	gui.addToggle("Disable Messages", disable_serial);
-
-	gui_limit1 = &gui.addSlider("Limit A1", limit1, -10, 10);
-	gui_limit2 = &gui.addSlider("Limit A2", limit2, -10, 10);
-	gui_limit3 = &gui.addSlider("Limit A3", limit3, -10, 10);
+	gui_limit1 = &gui.addSlider("Limit S", limit1, -10, 10);
+	gui_limit2 = &gui.addSlider("Limit M", limit2, -10, 10);
+	gui_limit3 = &gui.addSlider("Limit L", limit3, -10, 10);
 	gui.addSlider("Arduino msg", min_message_period, 0, 30);
 
-	gui.addButton("Send A1", message1).setNewColumn(true).setSize(128, 20);
-	gui.addButton("Send A2", message2).setSize(128, 20);
-	gui.addButton("Send A3", message3).setSize(128, 20);
+	gui.addSlider("Sound speed min", sound_speed_min, 0, 12);
+	gui.addSlider("Sound speed max", sound_speed_max, 0, 12);
+
+	gui.addButton("Send S", message1).setNewColumn(true).setSize(128, 20);
+	gui.addButton("Send M", message2).setSize(128, 20);
+	gui.addButton("Send L", message3).setSize(128, 20);
 
 	gui.addToggle("Enable smile sound", enable_smile_sound).setSize(200, 20);
 	gui.addToggle("Enable face sound", enable_face_sound).setSize(200, 20);
 
+	gui.addButton("Take photo", take_photo).setSize(128, 20);
+	gui.addToggle("RGB-BGR", rgb_bgr).setSize(128, 20);
+	gui.addToggle("Disable Messages", disable_serial).setSize(200, 20);
 
 	gui.loadFromXML();
 
@@ -184,11 +186,12 @@ void testApp::play_sample(int which_sound)
 
 	int i = random() % n;
 	sounds[i]->play();
-	sounds[i]->setLoop(true);
+	sounds[i]->setVolume(1);
 	switch (which_sound)
 	{
 		case PLAY_FACE_SOUND:
 			sound_current_face = sounds[i];
+			sound_current_face->setLoop(true);
 			break;
 		case PLAY_SMILE_SOUND:
 			sound_current_smile = sounds[i];
@@ -197,26 +200,28 @@ void testApp::play_sample(int which_sound)
 }
 
 // messages sent for each happiness threshold
-//string testApp::messages[] = { "a1", "b1", "c1" };
-string testApp::messages[] = { "a1", "a2", "a3" };
+string testApp::messages[][7] = {{"c1", "c2", "c3", "c4", "c5", "c6", ""},
+								{"b1", "b2", "b3", "b4", "b5", "b6", ""},
+								{"a1", "a3", "",}};
 
 void testApp::send_arduino_message(int i)
 {
-	cout << timestamp << " sending " << messages[i] << endl;
+	static int messages_ind[3] = { 0, 0, 0 };
+
+	if ((i < 0) || (i > 2))
+		return;
+
+	string msg = messages[i][messages_ind[i]];
+
+	cout << timestamp << " sending " << msg << endl;
 	if (serial_inited)
-		serial.writeBytes((unsigned char *)messages[i].c_str(), 2);
+		serial.writeBytes((unsigned char *)msg.c_str(), 2);
 	else
 		cout << "arduino not connected" << endl;
 
-	/*
-	char max_msg_count = '5'; // after a5, b5, c1, it restarts from a1, b1, c1
-	char c = messages[i][1];
-	if (c == max_msg_count)
-		c = '1';
-	else
-		c++;
-	messages[i][1] = c;
-	*/
+	messages_ind[i]++;
+	if (messages[i][messages_ind[i]] == "")
+		messages_ind[i] = 0;
 }
 
 void testApp::send_arduino_message()
@@ -248,7 +253,7 @@ void testApp::send_arduino_message()
 		}
 		else
 		{
-			cout << timestamp << " skipping message " << messages[happiness_index] << endl;
+			cout << timestamp << " skipping message for happiness level " << happiness_index << endl;
 		}
 	}
 }
@@ -429,6 +434,11 @@ void testApp::update()
 		last_face_time = time;
 		if (!face_detected) // first time a face shows up
 		{
+			// delete smile average array
+			for (int i = 0; i < SMILE_AVERAGES; i++)
+			{
+				smile_averages[i] = 0;
+			}
 			play_sample(PLAY_FACE_SOUND);
 			one_chocolate_per_face = true;
 		}
@@ -454,11 +464,6 @@ void testApp::update()
 		{
 			if (happiness > max_happiness)
 				max_happiness = happiness;
-			// set speed of smile sound according to current happiness level
-			if (sound_current_smile && sound_current_smile->getIsPlaying())
-			{
-				sound_current_smile->setSpeed(happiness * .5);
-			}
 		}
 		else
 		{
@@ -467,12 +472,21 @@ void testApp::update()
 				arduino_msg_trigger = true;
 				one_chocolate_per_face = false;
 			}
-			// stop smile sound
-			if (sound_current_smile && sound_current_smile->getIsPlaying())
+			// stop face sound
+			if (sound_current_face && sound_current_face->getIsPlaying())
 			{
-				sound_current_smile->stop();
+				sound_current_face->stop();
 			}
 		}
+	}
+
+	// set speed of face sound according to current happiness level
+	if (sound_current_face && sound_current_face->getIsPlaying())
+	{
+		sound_current_face->setSpeed(sound_speed_min +
+				(sound_speed_max - sound_speed_min) * (happiness - -6) / (6 - -6));
+		// increase volume
+		sound_current_face->setVolume(1 + 1 * (happiness - -6) / (6 - -6));
 	}
 
 	// update gui
